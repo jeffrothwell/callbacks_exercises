@@ -130,8 +130,17 @@ console.log( 'The total number of transactions is:', totalTransactions );
   HINT(S):
   - Not all transactions are 'sales'.
 */
-var numSales;
+// var numSales = 0;
 
+
+// transactions.forEach(function(transaction){
+//   if (transaction.type === 'sale') {
+//     numSales++;
+//   }
+// });
+var numSales = transactions.filter(function(transaction){
+  return transaction.type === 'sale'
+}).length;
 /*
   Hey, welcome to the first question!
 
@@ -160,8 +169,15 @@ console.log( 'The total number of sales is:', numSales );
 /*
   Calculate the total number of 'purchases'.
 */
-var numPurchases;
+// var numPurchases = 0;
 
+var numPurchases = transactions.filter(function(transaction){
+  return transaction.type === 'purchase'
+}).length;
+
+// const numPurchases = transactions.filter(
+//   transaction => transaction.type === 'purchase'
+// ).length;
 console.log( 'The total number of purchases is:', numPurchases );
 
 
@@ -174,7 +190,14 @@ console.log( 'The total number of purchases is:', numPurchases );
   HINT(S):
   - Don't forget that 'purchases' can also be made in 'cash'!
 */
-var numCashSales;
+var numCashSales = 0;
+
+transactions.forEach(function(transaction){
+  if (transaction.type === 'sale' && transaction.paymentMethod === 'cash') {
+    numCashSales++;
+  }
+});
+
 
 console.log( 'The total number of cash sales is:', numCashSales );
 
@@ -188,7 +211,14 @@ console.log( 'The total number of cash sales is:', numCashSales );
   HINT(S):
   - Make sure to exclude any 'sales' made by 'credit'!
 */
-var numCreditPurchases;
+var numCreditPurchases = 0;
+
+transactions.forEach(function(transaction){
+  if (transaction.type === 'purchase' && transaction.paymentMethod === 'credit') {
+    numCreditPurchases++;
+  }
+});
+
 
 console.log( 'The total number of credit purchases is:', numCreditPurchases );
 
@@ -205,7 +235,30 @@ console.log( 'The total number of credit purchases is:', numCreditPurchases );
   - The assembled array should be made up of strings, not full `transaction` objects.
   - This array is allowed to contain duplicate values.
 */
-var allVendors;
+// var allVendors = [];
+//
+// transactions.forEach(function(transaction){
+//   if (transaction.type === 'purchase') {
+//     allVendors.push(transaction.vendor);
+//   }
+// });
+
+// I did it as above, then Sean showed me this:
+
+function isPurchase(transaction){
+  return transaction.type === 'purchase';
+}
+
+function isSale(transaction){
+  return transaction.type === 'sale';
+}
+
+
+function toVendor(purchase){
+  return purchase.vendor;
+}
+
+allVendors = transactions.filter(isPurchase).map(toVendor);
 
 console.log( 'The vendors are:', allVendors );
 
@@ -222,7 +275,13 @@ console.log( 'The vendors are:', allVendors );
   - The assembled array should be made up of strings, not full `transaction` objects.
   - Make sure that the resulting array *does not* include any duplicates.
 */
-var uniqueCustomers;
+var uniqueCustomers = [];
+
+transactions.forEach(function(transaction){
+  if (transaction.type === 'sale' && !uniqueCustomers.includes(transaction.customer)) {
+    uniqueCustomers.push(transaction.customer);
+  }
+});
 
 console.log( 'The unique customers are:', uniqueCustomers );
 
@@ -240,7 +299,12 @@ console.log( 'The unique customers are:', uniqueCustomers );
   - There may be more than 1 'sale' that includes 5 or more items.
   - Individual transactions do not have either `name` or `numItems` properties, we'll have to add them to the output.
 */
-var bigSpenders;
+var bigSpenders = [];
+transactions.forEach(function(transaction){
+  if (transaction.type === 'sale' && transaction.items.length > 4) {
+    bigSpenders.push({'name': transaction.customer, 'numItems': transaction.items.length})
+  }
+});
 
 console.log( 'The "big spenders" are:', bigSpenders );
 
@@ -254,7 +318,17 @@ console.log( 'The "big spenders" are:', bigSpenders );
   HINT(S):
   - Transactions don't have 'prices', but their 'items' do!
 */
-var sumSales;
+// var sumSales = 0;
+//
+// transactions.forEach(function(transaction){
+//   if (transaction.type === 'sale' && sumSales === 0) {
+//     transaction.items.forEach(function(item){
+//       sumSales += item.price;
+//     });
+//   }
+// });
+
+var sumSales = transactions.filter(isSale).reduce(addTransaction, 0);
 
 console.log( 'The sum of all sales is:', sumSales );
 
@@ -270,7 +344,25 @@ console.log( 'The sum of all sales is:', sumSales );
   - Make sure to include 'price' information from *all* purchases.
 */
 
-var sumPurchases;
+// function sumItems(transaction){
+//   var sum = 0;
+//   transaction.items.forEach(function(item){
+//     sum += item.price;
+//   });
+//   return sum;
+// }
+
+function sumItems(transaction){
+  return transaction.items.reduce(function(total, item){
+    return total + item.price;
+  }, 0)
+}
+
+function addTransaction(total, transaction){
+  return total + sumItems(transaction);
+}
+
+var sumPurchases = transactions.filter(isPurchase).reduce(addTransaction, 0);
 
 console.log( 'The sum of all purhcases is:', sumPurchases );
 
@@ -289,6 +381,10 @@ console.log( 'The sum of all purhcases is:', sumPurchases );
   - Unlike 'QUESTION 08' and 'QUESTION 09', here we're interested in both 'sale' and 'purchase' transactions.
 */
 var netProfit;
+
+sumSales = transactions.filter(isSale).reduce(addTransaction, 0);
+
+netProfit = sumSales + sumPurchases;
 
 console.log( 'The net profit is:', netProfit );
 
