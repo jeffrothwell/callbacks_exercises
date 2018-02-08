@@ -283,6 +283,15 @@ transactions.forEach(function(transaction){
   }
 });
 
+// NEW WAY:, not working currently, not unique.
+// var uniqueCustomers = [];
+//
+// uniqueCustomers = transactions.filter(isSale).map(function(transaction){
+//   if (!uniqueCustomers.includes(transaction.customer)) {
+//     return transaction.customer
+//   }
+// });  // This does not work, ask someone why
+
 console.log( 'The unique customers are:', uniqueCustomers );
 
 
