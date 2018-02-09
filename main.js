@@ -283,6 +283,10 @@ transactions.forEach(function(transaction){
   }
 });
 
+for (var i = 0; i < array.length; i++) {
+  array[i]
+}
+
 // NEW WAY:, not working currently, not unique.
 // var uniqueCustomers = [];
 //
